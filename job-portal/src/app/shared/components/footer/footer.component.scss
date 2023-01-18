@@ -1,0 +1,23 @@
+.footer{
+    height: 3.5rem;
+    background-color: var(--secondary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 10px;
+
+    &-title{
+        font-size: 3.2rem;
+        color: white;
+    }
+}
+
+.img-wrapper{
+    width: 10%;
+    height: 10%;
+
+    img{
+        width: 100%;
+        height: 100%;
+    }
+}
