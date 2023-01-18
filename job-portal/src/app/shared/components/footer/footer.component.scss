@@ -1,20 +1,15 @@
 .footer{
-    height: 3.5rem;
+    height: 4.5rem;
     background-color: var(--secondary-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-inline: 10px;
-
-    &-title{
-        font-size: 3.2rem;
-        color: white;
-    }
 }
 
 .img-wrapper{
     width: 10%;
-    height: 10%;
+    height: 100%;
 
     img{
         width: 100%;
