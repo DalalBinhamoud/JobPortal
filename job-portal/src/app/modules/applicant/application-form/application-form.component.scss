@@ -4,3 +4,13 @@
     justify-content: center;
     height: 100%;
 }
+
+.submit{
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 14px;
+    button{
+        background-color: var(--primary-color);
+    }
+
+}
