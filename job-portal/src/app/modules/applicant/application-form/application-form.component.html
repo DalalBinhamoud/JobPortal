@@ -53,42 +53,26 @@
           placeholder="Enter {{ input }}"
         />
       </div>
-      <p
-        class="text-red-500 text-xs italic"
-        *ngIf="
-          applicationForm.controls[input].touched &&
-          applicationForm.controls[input].hasError('required')
-        "
-      >
-        Please fill out this field.
-      </p>
+
+      <ng-container *ngFor="let validation of mobileValidationErrors">
+        <div
+          class="text-red-500 text-xs"
+          *ngIf="
+            applicationForm.controls[input].hasError(validation.name) &&
+            applicationForm.controls[input].touched
+          "
+        >
+          * {{ validation.message }}
+        </div>
+      </ng-container>
     </div>
 
     <label
-      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      for="file_input"
-      >Upload file</label
-    >
-    <input
-      class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-      aria-describedby="file_input_help"
-      id="file_input"
-      type="file"
-      formControlName="file"
-      (change)="onFileChange($event)"
-    />
-    <p
-      class="mt-1 text-sm text-gray-500 dark:text-gray-300"
-      id="file_input_help"
-    >
-      SVG, PNG, JPG or GIF (MAX. 800x400px).
-    </p>
-
-    <label
+      class="block tracking-wide text-gray-700 text-xs font-bold mb-2"
       for="countries"
-      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >Select Desired Job</label
     >
+      Select Desired Job
+    </label>
     <select
       id="countries"
       formControlName="jobId"
@@ -100,6 +84,43 @@
       <option value="FR">France</option>
       <option value="DE">Germany</option>
     </select>
+
+    <label
+      class="block tracking-wide text-gray-700 text-xs font-bold mb-2"
+      for="file"
+    >
+      Upload Resume
+    </label>
+    <div class="flex justify-between">
+      <input
+        #resume
+        class="file-input"
+        type="file"
+        id="file"
+        (change)="handleFileInput($event.target)"
+      />
+
+      <button (click)="removeUploadedFile()" *ngIf="file" class="remove-btn">
+        <img src="assets/icons/delete.svg" alt="delete" />
+      </button>
+    </div>
+
+    <p
+      class="text-red-500 text-xs italic"
+      *ngIf="
+        applicationForm.controls['file'].touched &&
+        applicationForm.controls['file'].hasError('required')
+      "
+    >
+      Please fill out this field.
+    </p>
+
+    <p
+      class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+      id="file_input_help"
+    >
+      SVG, PNG, JPG or GIF (MAX. 800x400px).
+    </p>
 
     <div class="submit">
       <button
