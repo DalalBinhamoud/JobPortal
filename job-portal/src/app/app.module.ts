@@ -7,11 +7,27 @@ import { AdminModule } from './modules/admin/admin.module';
 import { ApplicantModule } from './modules/applicant/applicant.module';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { NgxTranslateModule } from './modules/ngx-translate/ngx-translate.module';
+import { InterceptorService } from './services/interceptor/interceptor.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
-  imports: [BrowserModule, AppRoutingModule, ApplicantModule, AdminModule],
-  providers: [],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ApplicantModule,
+    AdminModule,
+    NgxTranslateModule,
+    HttpClientModule,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorService,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

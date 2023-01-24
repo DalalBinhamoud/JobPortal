@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ApplicantRoutingModule } from './applicant-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationFormComponent } from './application-form/application-form.component';
+import { NgxTranslateModule } from '../ngx-translate/ngx-translate.module';
 
 @NgModule({
   declarations: [ApplicationFormComponent],
@@ -12,6 +13,7 @@ import { ApplicationFormComponent } from './application-form/application-form.co
     ApplicantRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxTranslateModule,
   ],
 })
 export class ApplicantModule {}

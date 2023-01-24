@@ -1,5 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FieldValidationErrDto,
+  InputFieldDto,
+} from 'src/app/Models/IInputField';
+import { JobDto } from 'src/app/Models/IJob';
+import { JobService } from 'src/app/services/job/job.service';
 import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 
 @Component({
@@ -9,9 +15,44 @@ import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 })
 export class ApplicationFormComponent implements OnInit {
   public applicationForm!: FormGroup;
-  formHalfLenInputs = ['firstName', 'lastName'];
-  formFullLenInputs = ['email', 'phone', 'linkedin'];
-  mobileValidationErrors: { name: string; message: string }[] = [];
+  jobs: JobDto[] = [
+    { jobNo: 1, name: 'test1' },
+    { jobNo: 2, name: 'test2' },
+  ];
+
+  basicValidationErrs: FieldValidationErrDto[] = [];
+
+  formHalfLenInputs: InputFieldDto[] = [
+    {
+      controlName: 'firstName',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.name,
+    },
+    {
+      controlName: 'lastName',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.name,
+    },
+  ];
+  formFullLenInputs: InputFieldDto[] = [
+    {
+      controlName: 'email',
+      type: 'email',
+      maxLength: this.utilities.fieldsMaxLength.email,
+    },
+    {
+      controlName: 'mobile',
+      type: 'tel',
+      maxLength: this.utilities.fieldsMaxLength.mobile,
+      minLength: this.utilities.fieldsMaxLength.mobile,
+    },
+    {
+      controlName: 'linkedin',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.url,
+      optional: true,
+    },
+  ];
 
   onChange!: Function;
   file: File | null = null;
@@ -19,7 +60,8 @@ export class ApplicationFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private utilities: UtilitiesService
+    private utilities: UtilitiesService,
+    private _jobService: JobService
   ) {}
 
   handleFileInput(target: HTMLInputElement | null | any) {
@@ -33,13 +75,29 @@ export class ApplicationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mobileValidationErrors = this.utilities.mobileValidationErrors;
+    this.basicValidationErrs = this.utilities.basicValidationErrs;
+    this.getJobs();
+    this.buildForm();
+  }
+
+  getJobs() {
+    this._jobService.getJobs().subscribe(
+      (res) => {
+        this.jobs = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  buildForm() {
     this.applicationForm = this.formBuilder.group({
       firstName: ['d', Validators.required],
       lastName: ['s', Validators.required],
       email: ['t@ww.ww', [Validators.required, Validators.email]],
-      phone: [
-        'rrrrrrrrrr',
+      mobile: [
+        '0506999888',
 
         [
           Validators.required,
@@ -49,7 +107,7 @@ export class ApplicationFormComponent implements OnInit {
         ],
       ],
       jobId: ['', Validators.required],
-      file: ['', Validators.required],
+      file: ['', [Validators.required, this.utilities.fileTypeValidation]],
       // skills: [''],
       linkedin: [''],
     });
@@ -64,7 +122,6 @@ export class ApplicationFormComponent implements OnInit {
   }
 
   submitApplication() {
-    console.log('me clicked', this.applicationForm.controls);
-    console.log('me clicked', this.applicationForm);
+    console.log('me clicked', this.applicationForm.value);
   }
 }
