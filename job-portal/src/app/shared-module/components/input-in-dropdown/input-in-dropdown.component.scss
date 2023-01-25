@@ -1,0 +1,20 @@
+.list {
+  padding: 5px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  height: auto;
+  overflow: auto;
+  white-space: pre-wrap;
+  display: flex;
+  align-items: center;
+}
+
+.list label {
+  background-color: var(--secondary-color);
+  margin-right: 5px;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  display: inline-block;
+}

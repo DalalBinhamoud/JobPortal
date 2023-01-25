@@ -90,7 +90,7 @@
       formControlName="jobId"
       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
     >
-      <option *ngFor="let job of jobs" [value]="job.jobNo">
+      <option *ngFor="let job of jobs" [value]="job.id">
         {{ job.name }}
       </option>
     </select>
@@ -136,6 +136,20 @@
     >
       {{ "resume.allowedFormat" | translate }}
     </p>
+
+    <label
+      class="block tracking-wide text-gray-700 text-xs font-bold mb-2"
+      for="skills"
+    >
+      {{ "skills" | translate }}
+    </label>
+
+    <app-input-in-dropdown
+      [listItems]="skills"
+      [label]="'otherSkill'"
+      formControlName="skills"
+      (getSelectedItems)="getSelectedSkills($event)"
+    ></app-input-in-dropdown>
 
     <div class="submit">
       <button

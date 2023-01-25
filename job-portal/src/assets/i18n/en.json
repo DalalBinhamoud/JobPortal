@@ -5,6 +5,8 @@
     "email": "Email",
     "mobile": "Mobile",
     "linkedin": "Linkedin",
+    "skills": "Skills",
+    "otherSkill": "Other Skill",
     "action":{
         "submit": "Submit"
     },

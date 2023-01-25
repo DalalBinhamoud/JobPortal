@@ -4,8 +4,10 @@ import {
   FieldValidationErrDto,
   InputFieldDto,
 } from 'src/app/Models/IInputField';
-import { JobDto } from 'src/app/Models/IJob';
-import { JobService } from 'src/app/services/job/job.service';
+import { LookupDto } from 'src/app/Models/ILookup';
+import { ApplicationService } from 'src/app/services/application/application.service';
+import { LookupService } from 'src/app/services/lookup/lookup.service';
+
 import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 
 @Component({
@@ -15,9 +17,13 @@ import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 })
 export class ApplicationFormComponent implements OnInit {
   public applicationForm!: FormGroup;
-  jobs: JobDto[] = [
-    { jobNo: 1, name: 'test1' },
-    { jobNo: 2, name: 'test2' },
+  jobs: LookupDto[] = [
+    { id: 1, name: 'test1' },
+    { id: 2, name: 'test2' },
+  ];
+  skills: LookupDto[] = [
+    { id: 1, name: 'data1', selected: false },
+    { id: 2, name: 'data2', selected: false },
   ];
 
   basicValidationErrs: FieldValidationErrDto[] = [];
@@ -61,7 +67,8 @@ export class ApplicationFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private utilities: UtilitiesService,
-    private _jobService: JobService
+    private _lookupSvc: LookupService,
+    private _applicationService: ApplicationService
   ) {}
 
   handleFileInput(target: HTMLInputElement | null | any) {
@@ -77,15 +84,27 @@ export class ApplicationFormComponent implements OnInit {
   ngOnInit(): void {
     this.basicValidationErrs = this.utilities.basicValidationErrs;
     this.getJobs();
+    this.getSkills();
     this.buildForm();
   }
 
   getJobs() {
-    this._jobService.getJobs().subscribe(
-      (res) => {
+    this._lookupSvc.getJobs().subscribe(
+      (res: LookupDto[]) => {
         this.jobs = res;
       },
-      (err) => {
+      (err: Error) => {
+        console.log(err);
+      }
+    );
+  }
+
+  getSkills() {
+    this._lookupSvc.getSkills().subscribe(
+      (res: LookupDto[]) => {
+        this.skills = res;
+      },
+      (err: Error) => {
         console.log(err);
       }
     );
@@ -108,7 +127,7 @@ export class ApplicationFormComponent implements OnInit {
       ],
       jobId: ['', Validators.required],
       file: ['', [Validators.required, this.utilities.fileTypeValidation]],
-      // skills: [''],
+      skills: [''],
       linkedin: [''],
     });
   }
@@ -121,7 +140,25 @@ export class ApplicationFormComponent implements OnInit {
     this.resume.nativeElement.value = null; // clear input
   }
 
+  getSelectedSkills(items: LookupDto[]) {
+    const selectedSkills = items?.filter((item) => item.selected);
+
+    this.applicationForm.patchValue({
+      skills: selectedSkills,
+    });
+  }
+
   submitApplication() {
-    console.log('me clicked', this.applicationForm.value);
+    const formData = new FormData();
+    formData.append('resume', this.applicationForm.value?.file);
+
+    this._applicationService
+      .submitApplication(this.applicationForm.value)
+      .subscribe(
+        (res) => {
+          //TODO: call another endpoint to upload resume
+        },
+        (error) => {}
+      );
   }
 }
