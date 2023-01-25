@@ -11,26 +11,32 @@
       >
         <label
           class="block tracking-wide text-xs font-bold mb-2"
-          for="grid-first-name"
+          [ngClass]="{ required: !input.optional }"
+          [for]="input.controlName"
         >
-          {{ input }}
+          {{ input.controlName | translate }}
         </label>
         <input
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="grid-last-name"
-          type="text"
-          [formControlName]="input"
-          placeholder="Doe"
+          [id]="input.controlName"
+          [type]="input.type"
+          [formControlName]="input.controlName"
+          [maxlength]="input.maxLength"
+          placeholder="Enter {{ input.controlName | translate }}"
         />
-        <p
-          class="text-red-500 text-xs italic"
-          *ngIf="
-            applicationForm.controls[input].touched &&
-            applicationForm.controls[input].hasError('required')
-          "
-        >
-          Please fill out this field.
-        </p>
+        <ng-container *ngFor="let validationErr of basicValidationErrs">
+          <p
+            class="text-red-500 text-xs"
+            *ngIf="
+              applicationForm.controls[input.controlName].touched &&
+              applicationForm.controls[input.controlName].hasError(
+                validationErr.name
+              )
+            "
+          >
+            {{ validationErr.message | translate }}
+          </p>
+        </ng-container>
       </div>
     </div>
 
@@ -41,73 +47,117 @@
       <div class="w-full px-3">
         <label
           class="block tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="grid-password"
+          [ngClass]="{ required: !input.optional }"
+          [for]="input.controlName"
         >
-          {{ input }}
+          {{ input.controlName | translate }}
         </label>
         <input
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          [type]="input"
-          [id]="input"
-          [formControlName]="input"
-          placeholder="Enter {{ input }}"
+          [type]="input.type"
+          [id]="input.controlName"
+          [formControlName]="input.controlName"
+          placeholder="Enter {{ input.controlName | translate }}"
+          [minlength]="input.minLength ? input.minLength : 0"
+          [maxlength]="input.maxLength"
         />
+        <ng-container *ngFor="let validationErr of basicValidationErrs">
+          <p
+            class="text-red-500 text-xs"
+            *ngIf="
+              applicationForm.controls[input.controlName].touched &&
+              applicationForm.controls[input.controlName].hasError(
+                validationErr.name
+              )
+            "
+          >
+            {{
+              validationErr.message | translate : { number: input.minLength }
+            }}
+          </p>
+        </ng-container>
       </div>
-      <p
-        class="text-red-500 text-xs italic"
-        *ngIf="
-          applicationForm.controls[input].touched &&
-          applicationForm.controls[input].hasError('required')
-        "
-      >
-        Please fill out this field.
-      </p>
     </div>
 
     <label
-      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      for="file_input"
-      >Upload file</label
+      class="block tracking-wide text-gray-700 text-xs font-bold mb-2 required"
+      for="jobs"
     >
-    <input
-      class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-      aria-describedby="file_input_help"
-      id="file_input"
-      type="file"
-      formControlName="file"
-      (change)="onFileChange($event)"
-    />
+      {{ "selectJob" | translate }}
+    </label>
+    <select
+      id="jobs"
+      formControlName="jobId"
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    >
+      <option *ngFor="let job of jobs" [value]="job.id">
+        {{ job.name }}
+      </option>
+    </select>
+
+    <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center">
+        <label
+          class="block text-xs font-bold fileContainer text-white mx-1 required"
+          for="file"
+        >
+          {{ "resume.upload" | translate }}
+
+          <input
+            #resume
+            type="file"
+            id="file"
+            (change)="handleFileInput($event.target)"
+          />
+        </label>
+        <span>{{ file?.name }}</span>
+      </div>
+
+      <button (click)="removeUploadedFile()" *ngIf="file" class="remove-btn">
+        <img src="assets/icons/delete.svg" alt="delete" />
+      </button>
+    </div>
+
+    <ng-container *ngFor="let validationErr of basicValidationErrs">
+      <p
+        class="text-red-500 text-xs"
+        *ngIf="
+          applicationForm.controls['file'].touched &&
+          applicationForm.controls['file'].hasError(validationErr.name)
+        "
+      >
+        {{ validationErr.message | translate }}
+      </p>
+    </ng-container>
+
     <p
       class="mt-1 text-sm text-gray-500 dark:text-gray-300"
       id="file_input_help"
     >
-      SVG, PNG, JPG or GIF (MAX. 800x400px).
+      {{ "resume.allowedFormat" | translate }}
     </p>
 
     <label
-      for="countries"
-      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >Select Desired Job</label
+      class="block tracking-wide text-gray-700 text-xs font-bold mb-2"
+      for="skills"
     >
-    <select
-      id="countries"
-      formControlName="jobId"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    >
-      <option selected>Choose a country</option>
-      <option value="US">United States</option>
-      <option value="CA">Canada</option>
-      <option value="FR">France</option>
-      <option value="DE">Germany</option>
-    </select>
+      {{ "skills" | translate }}
+    </label>
+
+    <app-input-in-dropdown
+      [listItems]="skills"
+      [label]="'otherSkill'"
+      formControlName="skills"
+      (getSelectedItems)="getSelectedSkills($event)"
+    ></app-input-in-dropdown>
 
     <div class="submit">
       <button
         type="submit"
-        class="text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        class="text-white text-xs font-bold px-5 py-2.5 text-center"
         [disabled]="!applicationForm.valid"
       >
-        Submit
+        {{ "action.submit" | translate }}
       </button>
     </div>
   </form>

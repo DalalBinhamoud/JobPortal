@@ -1,5 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FieldValidationErrDto,
+  InputFieldDto,
+} from 'src/app/Models/IInputField';
+import { LookupDto } from 'src/app/Models/ILookup';
+import { ApplicationService } from 'src/app/services/application/application.service';
+import { LookupService } from 'src/app/services/lookup/lookup.service';
+
+import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 
 @Component({
   selector: 'app-application-form',
@@ -8,45 +17,148 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class ApplicationFormComponent implements OnInit {
   public applicationForm!: FormGroup;
-  formHalfLenInputs = ['firstName', 'lastName'];
-  formFullLenInputs = ['email', 'phone', 'linkedin'];
+  jobs: LookupDto[] = [
+    { id: 1, name: 'test1' },
+    { id: 2, name: 'test2' },
+  ];
+  skills: LookupDto[] = [
+    { id: 1, name: 'data1', selected: false },
+    { id: 2, name: 'data2', selected: false },
+  ];
 
-  constructor(private formBuilder: FormBuilder) {}
+  basicValidationErrs: FieldValidationErrDto[] = [];
+
+  formHalfLenInputs: InputFieldDto[] = [
+    {
+      controlName: 'firstName',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.name,
+    },
+    {
+      controlName: 'lastName',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.name,
+    },
+  ];
+  formFullLenInputs: InputFieldDto[] = [
+    {
+      controlName: 'email',
+      type: 'email',
+      maxLength: this.utilities.fieldsMaxLength.email,
+    },
+    {
+      controlName: 'mobile',
+      type: 'tel',
+      maxLength: this.utilities.fieldsMaxLength.mobile,
+      minLength: this.utilities.fieldsMaxLength.mobile,
+    },
+    {
+      controlName: 'linkedin',
+      type: 'text',
+      maxLength: this.utilities.fieldsMaxLength.url,
+      optional: true,
+    },
+  ];
+
+  onChange!: Function;
+  file: File | null = null;
+  @ViewChild('resume') resume!: ElementRef;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private utilities: UtilitiesService,
+    private _lookupSvc: LookupService,
+    private _applicationService: ApplicationService
+  ) {}
+
+  handleFileInput(target: HTMLInputElement | null | any) {
+    this.applicationForm.controls['file'].markAsTouched();
+    console.log(target.files[0]);
+
+    this.file = target.files[0];
+    this.applicationForm.patchValue({
+      file: this.file,
+    });
+  }
 
   ngOnInit(): void {
+    this.basicValidationErrs = this.utilities.basicValidationErrs;
+    this.getJobs();
+    this.getSkills();
+    this.buildForm();
+  }
+
+  getJobs() {
+    this._lookupSvc.getJobs().subscribe(
+      (res: LookupDto[]) => {
+        this.jobs = res;
+      },
+      (err: Error) => {
+        console.log(err);
+      }
+    );
+  }
+
+  getSkills() {
+    this._lookupSvc.getSkills().subscribe(
+      (res: LookupDto[]) => {
+        this.skills = res;
+      },
+      (err: Error) => {
+        console.log(err);
+      }
+    );
+  }
+
+  buildForm() {
     this.applicationForm = this.formBuilder.group({
       firstName: ['d', Validators.required],
       lastName: ['s', Validators.required],
       email: ['t@ww.ww', [Validators.required, Validators.email]],
-      phone: [
-        'rrrrrrrrrr',
+      mobile: [
+        '0506999888',
+
         [
           Validators.required,
+          this.utilities.mobileNoValidation,
           Validators.minLength(10),
           Validators.maxLength(10),
         ],
       ],
       jobId: ['', Validators.required],
-      file: [''],
-      // skills: [''],
+      file: ['', [Validators.required, this.utilities.fileTypeValidation]],
+      skills: [''],
       linkedin: [''],
     });
   }
 
-  onFileChange(event: any) {
-    console.log('event=', event.target);
+  removeUploadedFile() {
+    this.applicationForm.patchValue({
+      file: null,
+    });
+    this.file = null;
+    this.resume.nativeElement.value = null; // clear input
+  }
 
-    if (event.target.value) {
-      const file = event.target.value;
+  getSelectedSkills(items: LookupDto[]) {
+    const selectedSkills = items?.filter((item) => item.selected);
 
-      this.applicationForm.patchValue({
-        file,
-      });
-    }
+    this.applicationForm.patchValue({
+      skills: selectedSkills,
+    });
   }
 
   submitApplication() {
-    console.log('me clicked', this.applicationForm.controls);
-    console.log('me clicked', this.applicationForm);
+    const formData = new FormData();
+    formData.append('resume', this.applicationForm.value?.file);
+
+    this._applicationService
+      .submitApplication(this.applicationForm.value)
+      .subscribe(
+        (res) => {
+          //TODO: call another endpoint to upload resume
+        },
+        (error) => {}
+      );
   }
 }

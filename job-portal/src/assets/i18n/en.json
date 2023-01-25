@@ -1,0 +1,29 @@
+{
+ 
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "mobile": "Mobile",
+    "linkedin": "Linkedin",
+    "skills": "Skills",
+    "otherSkill": "Other Skill",
+    "action":{
+        "submit": "Submit"
+    },
+    "validation": {
+        "required": "This field is required",
+        "maxLength": "maximum length should be {{number}}",
+        "minLength": "minimum length should be {{number}}",
+        "mobileMustStartWith05": "mobile number must starts with 05",
+        "emailFormat": "Invalid email format",
+        "unSupportedFormat": "Invalid format",
+        "fileTypeValidation": "unsupported file extension"
+    },
+    "resume": {
+        "upload": "Upload Resume",
+        "allowedFormat": "Allowed formats are PNG, JPG or PDF",
+        "maxSize": "max file size is {{number}} MB"
+    },
+    "selectJob": "Select Desired Job"
+
+}

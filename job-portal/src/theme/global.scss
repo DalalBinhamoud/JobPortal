@@ -5,3 +5,44 @@
 body{
     margin: 0;
 }
+
+.remove-btn{
+    height: 1.6rem;
+    width: 1.6rem;
+}
+
+.required:after {
+    content:" *";
+    color: var(--danger-color);
+  }
+
+#tick-mark {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+#tick-mark::before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 50%;
+    width: 3px;
+    background-color: var(--primary-color);
+    content: "";
+    transform: translateX(10px) rotate(-45deg);
+    transform-origin: left bottom;
+}
+
+#tick-mark::after {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background-color: var(--primary-color);
+    content: "";
+    transform: translateX(10px) rotate(-45deg);
+    transform-origin: left bottom;
+}
