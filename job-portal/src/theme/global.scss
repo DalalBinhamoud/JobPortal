@@ -46,3 +46,10 @@ body{
     transform: translateX(10px) rotate(-45deg);
     transform-origin: left bottom;
 }
+
+.btn{
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    margin-top: 1rem;
+    padding: .8rem;
+}
