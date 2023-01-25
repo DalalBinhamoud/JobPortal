@@ -1,11 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ApplicationDto } from 'src/app/Models/IApplication';
 import {
   FieldValidationErrDto,
   InputFieldDto,
 } from 'src/app/Models/IInputField';
 import { LookupDto } from 'src/app/Models/ILookup';
 import { ApplicationService } from 'src/app/services/application/application.service';
+import { FileService } from 'src/app/services/file/file.service';
 import { LookupService } from 'src/app/services/lookup/lookup.service';
 
 import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
@@ -18,10 +20,12 @@ import { UtilitiesService } from 'src/app/services/utilities/utilities.service';
 export class ApplicationFormComponent implements OnInit {
   public applicationForm!: FormGroup;
   jobs: LookupDto[] = [
+    //mock
     { id: 1, name: 'test1' },
     { id: 2, name: 'test2' },
   ];
   skills: LookupDto[] = [
+    //mock
     { id: 1, name: 'data1', selected: false },
     { id: 2, name: 'data2', selected: false },
   ];
@@ -68,7 +72,8 @@ export class ApplicationFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private utilities: UtilitiesService,
     private _lookupSvc: LookupService,
-    private _applicationService: ApplicationService
+    private _applicationService: ApplicationService,
+    private _fileService: FileService
   ) {}
 
   handleFileInput(target: HTMLInputElement | null | any) {
@@ -155,8 +160,14 @@ export class ApplicationFormComponent implements OnInit {
     this._applicationService
       .submitApplication(this.applicationForm.value)
       .subscribe(
-        (res) => {
-          //TODO: call another endpoint to upload resume
+        (res: any) => {
+          formData.append('applicationId', res.id);
+          this._fileService.uploadFile(formData).subscribe(
+            (res) => {
+              //TODO call success message
+            },
+            (error) => {}
+          );
         },
         (error) => {}
       );
