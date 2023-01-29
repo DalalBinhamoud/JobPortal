@@ -1,0 +1,17 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-bottom: 6rem;
+}
+
+.submit{
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 14px;
+    button{
+        background-color: var(--primary-color);
+    }
+
+}
