@@ -13,6 +13,7 @@ export class UtilitiesService {
     email: 254,
     mobile: 10,
     url: 2000,
+    password: 128,
   };
 
   basicValidationErrs: FieldValidationErrDto[] = [

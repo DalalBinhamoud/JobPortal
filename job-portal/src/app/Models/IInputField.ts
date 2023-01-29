@@ -1,6 +1,6 @@
 export interface InputFieldDto {
   controlName: string;
-  type: 'text' | 'tel' | 'email';
+  type: 'text' | 'tel' | 'email' | 'password';
   maxLength: number;
   minLength?: number;
   optional?: Boolean;
