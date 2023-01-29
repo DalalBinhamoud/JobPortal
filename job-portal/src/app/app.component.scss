@@ -1,3 +1,8 @@
-.main{
-    background-color: var(--default-background);
+.main {
+  background-color: var(--default-background);
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
 }
